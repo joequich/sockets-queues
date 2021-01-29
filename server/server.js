@@ -11,11 +11,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static(publicPath));
 // IO = this is the backend communication
-let io = socketIO(server);
+module.exports.io = socketIO(server);
+require('./sockets/socket');
 
-io.on('connection', (client) => {
-    console.log('Connected user');
-});
 
 server.listen(port, (err) => {
     if (err) throw new Error(err);
