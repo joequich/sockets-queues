@@ -11,8 +11,11 @@ io.on('connection', (client) => {
     });
 
     client.emit('currentStatus', { 
-        current: ticketControl.getLastTicket() 
+        current: ticketControl.getLastTicket(),
+        last4: ticketControl.getLast4()
     });
+
+    
 
     client.on('attendTicket', (data, callback) => {
         if(!data.desktop) {
@@ -25,6 +28,10 @@ io.on('connection', (client) => {
         let attendTicket = ticketControl.attendTicket(data.desktop);
 
         callback(attendTicket);
+        
+        client.broadcast.emit('last4', { 
+            last4: ticketControl.getLast4()
+        });
     });
 
     ///hhhhh

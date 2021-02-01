@@ -38,6 +38,10 @@ class TicketControl {
         return `Ticket ${ this.last }`;
     }
 
+    getLast4() {
+        return this.last4;
+    }
+
     attendTicket(desktop) {
         if(this.tickets.length === 0) {
             return 'There are no tickets';
