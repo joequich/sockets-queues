@@ -40,11 +40,12 @@ class TicketControl {
 
     attendTicket(desktop) {
         if(this.tickets.length === 0) {
-            return 'There are no tickets'
+            return 'There are no tickets';
         }
 
         let numberTicket = this.tickets[0].number;
         this.tickets.shift();
+
         let attendTicket = new Ticket(numberTicket, desktop);
         this.last4.unshift(attendTicket);
 
