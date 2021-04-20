@@ -1,28 +1,21 @@
-var socket = io();
+const socket = io();
+const btnNew = document.querySelector('button');
+const lblNewTicket = document.querySelector('#lblNewTicket');
 
-socket.on('connect', function() {
-    console.log('Connected to the server');
+socket.on('connect', () => {
+    btnNew.disabled = false;
 });
 
-socket.on('disconnect', function() {
-    console.log('We lost connection with the server');
+socket.on('disconnect', () => {
+    btnNew.disabled = true;
 });
 
-socket.on('currentStatus', function(data) {
-    label.textContent = data.current;
+socket.on('last-ticket', (last) => {
+    lblNewTicket.textContent = last;
 });
 
-var buttons = document.querySelectorAll('button');
-var label = document.querySelector('#lblNewTicket');
-
-buttons.forEach( function(button) {
-
-    button.addEventListener('click', function() {
-        socket.emit('nextTicket', null, function(next) {
-            label.textContent = next;
-        });
-
-        
+btnNew.addEventListener('click', function() {
+    socket.emit('next-ticket', null, (next) => {
+        lblNewTicket.textContent = next;
     });
-
 });

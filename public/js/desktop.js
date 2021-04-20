@@ -1,25 +1,47 @@
-var socket = io();
-var searchParams = new URLSearchParams(window.location.search);
+const socket = io();
+const searchParams = new URLSearchParams(window.location.search);
 
 if(!searchParams.has('desktop')){
     window.location = 'index.html';
     throw new Error('Desktop is require');
 }
 
-var desktop = searchParams.get('desktop');
-var button = document.querySelector('#attdTicket');
-var label = document.querySelector('#nroTicket');
+const desktop = searchParams.get('desktop');
+const btnAttdTicket = document.querySelector('#attdTicket');
+const lblDesktop = document.querySelector('h1');
+const lblNroTicket = document.querySelector('#nroTicket');
+const lblPending = document.querySelector('#lblPending');
+const divAlert = document.querySelector('.alert');
 
-document.querySelector('h1').textContent = 'Desktop ' +desktop;
+lblDesktop.textContent = 'Desktop ' + desktop;
+divAlert.style.display = 'none';
 
-button.addEventListener('click', function() {
-    socket.emit('attendTicket', { desktop: desktop }, function(data) {
-        if(data === 'There are no tickets') {
-            alert(data);
-            return;
+socket.on('connect', () => {
+    btnAttdTicket.disabled = false;
+});
+
+socket.on('disconnect', () => {
+    btnAttdTicket.disabled = true;
+});
+
+socket.on('pending-tickets', (pending) => {
+    if(pending === 0) {
+        lblPending.style.display = 'none';
+    } else {
+        lblPending.style.display = '';
+        lblPending.textContent = pending;
+    }
+});
+
+btnAttdTicket.addEventListener('click', function() {
+    socket.emit('attend-ticket', { desktop }, ({ok, msg, ticket}) => {
+        if(!ok) {
+            lblNroTicket.textContent = 'nobody';
+            divAlert.textContent = msg;
+            return divAlert.style.display = '';
         }
 
-        label.textContent = 'Ticket ' +data.number;
+        lblNroTicket.textContent = `Ticket ${ticket.number}`;
     });
 });
 
